@@ -6,6 +6,7 @@
 */
 
 import * as gfx from 'gophergfx'
+import { Arrow } from './Arrow';
 
 export class ExampleApp extends gfx.GfxApp
 {   
@@ -17,12 +18,14 @@ export class ExampleApp extends gfx.GfxApp
     private target2Pos = new gfx.Vector3(25, 6, -35);
     private target3Pos = new gfx.Vector3(23, 18, -35);
 
+    private arrow = new Arrow();
 
     // --- Create the ExampleApp class ---
     constructor()
     {
         // initialize the base class gfx.GfxApp
         super();
+
     }
 
 
@@ -44,9 +47,10 @@ export class ExampleApp extends gfx.GfxApp
         pointLight.position = new gfx.Vector3(10, 10, 10);
 
         // show xyz axes lines at the origin (can be useful for debugging)
-        const axes = gfx.Geometry3Factory.createAxes(1);
+        const axes = gfx.Geometry3Factory.createAxes(5);
         this.scene.add(axes);
 
+        
         // ground
         const ground = gfx.Geometry3Factory.createBox(160, 4, 200);
         this.scene.add(ground);
@@ -91,6 +95,11 @@ export class ExampleApp extends gfx.GfxApp
         this.bird.material = birdMaterial;
         this.scene.add(this.bird);
 
+        this.arrow.position = new gfx.Vector3(0,8,0);
+        this.arrow.vector = new gfx.Vector3(0,5,0);
+        this.arrow.color = new gfx.Color(1, 1, 0);
+        this.scene.add(this.arrow);
+
         this.reset();
     }
 
@@ -119,6 +128,16 @@ export class ExampleApp extends gfx.GfxApp
         this.simulationTime = 0;
     }
 
+    sphereIntersectsBox(sphereCenter: gfx.Vector3, spherRadius: number,
+                        boxCenter: gfx.Vector3, boxSize: gfx.Vector3): boolean 
+    {
+        const xMin = boxCenter.x - boxSize.x/2;
+        const xMax = boxCenter.x + boxSize.x/2;
+
+        //if (sphereCenter + radius >= xMin)
+
+        return false;
+    }
 
     // --- Update is called once each frame by the main graphics loop ---
     update(deltaTime: number): void 
@@ -126,6 +145,13 @@ export class ExampleApp extends gfx.GfxApp
         this.simulationTime += deltaTime;
 
         this.bird.position = this.calcBirdPos(this.simulationTime);
+
+        this.arrow.position = this.bird.position;
+        this.arrow.vector = this.calcBirdVel(this.simulationTime);
+
+        //if (sphereIntersectsBox()) {
+            // hide the box
+        //}
 
         if (this.bird.position.y < 0) {
             this.reset();
